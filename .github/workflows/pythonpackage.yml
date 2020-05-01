@@ -59,6 +59,12 @@ jobs:
           --source
           --binary
           --out-dir dist/
+          .
+#      - name: Publish distribution 📦 to Test PyPI
+#          uses: pypa/gh-action-pypi-publish@master
+#          with:
+#            password: ${{ secrets.test_pypi_password }}
+#            repository_url: https://test.pypi.org/legacy/
       - name: Publish a Python distribution to PyPI
         uses: pypa/gh-action-pypi-publish@master
         continue-on-error: true
