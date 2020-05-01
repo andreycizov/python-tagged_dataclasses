@@ -30,5 +30,5 @@ class TestTaggedUnion(unittest.TestCase):
             print(val_b)
             pass
 
-        with self.assertRaisesRegexp(ValueError, 'not a member of tagged union'):
+        with self.assertRaisesRegex(ValueError, 'not a member of tagged union'):
             Mutable.from_value(A())
