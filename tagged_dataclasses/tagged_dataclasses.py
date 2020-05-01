@@ -86,7 +86,7 @@ class TaggedUnion(ABC, Generic[T]):
             cls._field_names = rt.field_names
 
     def __post_init__(self):
-        values = len([n for n in self._field_names.keys() if getattr(self, n) is not None])
+        values = len([n for n in self._field_types.keys() if getattr(self, n) is not None])
 
         if values != 1:
             raise ValueError('tagged union only supports one value at a time (%s)' % (values,))
