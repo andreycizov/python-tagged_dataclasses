@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
 
-readme = open('README.rst').read()
-history = open('HISTORY.rst').read()
+readme = open('README.md').read()
+history = open('HISTORY.md').read()
 reqs = [x.strip() for x in open('requirements.txt').readlines()]
-test_reqs = [x.strip() for x in open('requirements-tests.txt').readlines()]
 
 setup(
     name='tagged_dataclasses',
@@ -17,7 +16,6 @@ setup(
     include_package_data=True,
     long_description=readme,
     install_requires=reqs,
-    tests_require=test_reqs,
     entry_points={
     },
     classifiers=[
