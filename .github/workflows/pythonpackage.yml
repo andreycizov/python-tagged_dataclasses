@@ -37,3 +37,9 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Publish a Python distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      continue-on-error: true
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_password }}
