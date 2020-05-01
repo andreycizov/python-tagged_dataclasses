@@ -5,6 +5,7 @@ from dataclasses import fields, dataclass, Field
 from typing_inspect import is_optional_type, get_args
 
 T = TypeVar('T')
+SelfT = TypeVar('SelfT')
 
 KIND_FIELD_NAME = 'kind_name'
 
@@ -84,6 +85,12 @@ class TaggedUnion(ABC, Generic[T]):
             cls._field_types = rt.field_types
             cls._field_names = rt.field_names
 
+    def __post_init__(self):
+        values = len([n for n in self._field_names.keys() if getattr(self, n) is not None])
+
+        if values != 1:
+            raise ValueError('tagged union only supports one value at a time (%s)' % (values,))
+
     @classmethod
     def field_name(cls: 'Type[TaggedUnion[T]]', val: T) -> str:
         rtn = cls._field_names.get(val.__class__)
@@ -95,9 +102,9 @@ class TaggedUnion(ABC, Generic[T]):
 
     @classmethod
     def from_value(
-            cls: 'Type[TaggedUnion[T]]',
+            cls: Type[SelfT],
             val: T,
-    ) -> 'TaggedUnion[TaggedUnion[T]]':
+    ) -> SelfT:
         kind = cls.field_name(val)
 
         return cls(**{
