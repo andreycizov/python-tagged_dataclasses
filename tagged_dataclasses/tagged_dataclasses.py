@@ -2,17 +2,12 @@ from abc import ABC
 from typing import Dict, Type, Generic, TypeVar, ClassVar, List
 
 from dataclasses import fields, dataclass, Field
-from typing_inspect import is_optional_type, get_args
+from typing_inspect import is_optional_type, get_args, is_forward_ref
 
 T = TypeVar('T')
 SelfT = TypeVar('SelfT')
 
 KIND_FIELD_NAME = 'kind_name'
-
-
-def is_forward_ref(obj) -> bool:
-    # todo wait for release in ``typing_inspect``
-    return False
 
 
 @dataclass
