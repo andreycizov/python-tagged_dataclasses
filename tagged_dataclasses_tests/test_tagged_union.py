@@ -1,5 +1,5 @@
 import unittest
-from typing import Optional
+from typing import Optional, Any
 
 from dataclasses import dataclass
 
@@ -20,15 +20,28 @@ class TestTaggedUnion(unittest.TestCase):
             pass
 
         @dataclass
-        class Mutable(TaggedUnion[A]):
+        class Union(TaggedUnion[A]):
             first: Optional[AB] = None
             second: Optional[AC] = None
 
-        val_a = Mutable.from_value(AB())
-        val_b = Mutable.from_value(AC())
+        val_a = Union.from_value(AB())
+        val_b = Union.from_value(AC())
         if val_b.kind == AC:
             print(val_b)
             pass
 
         with self.assertRaisesRegex(ValueError, 'not a member of tagged union'):
-            Mutable.from_value(A())
+            Union.from_value(A())
+
+        with self.assertRaisesRegex(ValueError, 'tagged union only supports one value at a time'):
+            Union(
+                first=AB(),
+                second=AC(),
+            )
+
+    def test_init(self):
+        with self.assertRaisesRegex(TypeError, 'unsupported fields found'):
+            @dataclass
+            class Union(TaggedUnion[Any]):
+                first: int = 0
+

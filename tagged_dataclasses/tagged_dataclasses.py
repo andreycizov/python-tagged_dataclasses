@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Dict, Type, Generic, TypeVar, ClassVar, List
+from typing import Dict, Type, Generic, TypeVar, ClassVar, List, Optional
 
 from dataclasses import fields, dataclass, Field
 from typing_inspect import is_optional_type, get_args, is_forward_ref
@@ -23,7 +23,7 @@ class _TaggedUnionStruct(Generic[T]):
 
         kind_field, *fields = fields
 
-        if not (kind_field.name == KIND_FIELD_NAME and kind_field.type == str):
+        if not (kind_field.name == KIND_FIELD_NAME and kind_field.type == Optional[str]):
             raise ValueError('invalid `%s` field type: (%s)' % (KIND_FIELD_NAME, kind_field,))
 
         invalid_fields = []
@@ -49,10 +49,16 @@ class _TaggedUnionStruct(Generic[T]):
             field_types[field.name] = optional_type
             field_names[optional_type] = field.name
 
+        if len(invalid_fields):
+            raise TypeError('unsupported fields found: %s' % ([(f.name, err) for f, err in invalid_fields],))
+
         return _TaggedUnionStruct(
             field_names=field_names,
             field_types=field_types,
         )
+
+
+MISSING = object()
 
 
 @dataclass
@@ -63,7 +69,7 @@ class TaggedUnion(ABC, Generic[T]):
     does _not_ support forward type references (but to support it, look at ``typing.ForwardRef._evaluate``)
     """
 
-    kind_name: str
+    kind_name: Optional[str] = MISSING
     _field_types: ClassVar[Dict[str, Type[T]]]
     _field_names: ClassVar[Dict[Type[T], str]]
     _superclass: ClassVar[Type[T]]
@@ -81,10 +87,17 @@ class TaggedUnion(ABC, Generic[T]):
             cls._field_names = rt.field_names
 
     def __post_init__(self):
-        values = len([n for n in self._field_types.keys() if getattr(self, n) is not None])
+        values = [n for n in self._field_types.keys() if getattr(self, n) is not None]
 
-        if values != 1:
+        if len(values) != 1:
             raise ValueError('tagged union only supports one value at a time (%s)' % (values,))
+
+        kind, = values
+
+        if self.kind_name is MISSING:
+            self.kind_name = kind
+        elif kind != self.kind_name:
+            raise ValueError('tagged union `kind_name` is incorrectly set up (%s)' % (kind,))
 
     @classmethod
     def field_name(cls: 'Type[TaggedUnion[T]]', val: T) -> str:

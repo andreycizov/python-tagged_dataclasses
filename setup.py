@@ -6,7 +6,7 @@ reqs = [x.strip() for x in open('requirements.txt').readlines()]
 
 setup(
     name='tagged_dataclasses',
-    version='0.0.1',
+    version='0.0.2',
     author='Andrey Cizov',
     author_email='acizov@gmail.com',
     packages=find_packages(include=('tagged_dataclasses', 'tagged_dataclasses.*',)),

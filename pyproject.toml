@@ -1,7 +1,7 @@
 [tool.poetry]
 
 name = "tagged_dataclasses"
-version = "0.0.0"
+version = "0.0.2"
 description = ""
 authors = [
     "Andrey Cizov <acizov@gmail.com>"
@@ -25,8 +25,8 @@ classifiers = [
 # Requirements
 [tool.poetry.dependencies]
 python = "^3.6"
-typing_inspect = "^0.5.0"
-#dataclasses = { python = "^3.6" }
+typing_inspect = "^0.6"
+dataclasses = { version = ">0.1", python = "<3.7" }
 
 [tool.poetry.dev-dependencies]
 
